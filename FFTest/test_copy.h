@@ -5,13 +5,12 @@
 #ifndef FFTEST_TEST_COPY_H
 #define FFTEST_TEST_COPY_H
 
-#include <libavformat/avformat.h>
-#include <libavcodec/avcodec.h>
+#include "libavformat/avformat.h"
+#include "libavcodec/avcodec.h"
 
 /**
  * 最简单的基于FFMPEG的封装格式转换器（无编解码）
  * https://blog.csdn.net/leixiaohua1020/article/details/25422685
- * @return
  */
 static int test_copy() {
     const char *in_filename = "/Users/archko/Movie/健身气功八段锦-clip.mp4";

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		150065EF2AB5C09600084C97 /* libSDL2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 150065EE2AB5C09600084C97 /* libSDL2.dylib */; };
 		151AEF202AB297D100C7432D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 151AEF1F2AB297D100C7432D /* main.cpp */; };
 		15E9A3DC2AB2A55100DF76B9 /* libavformat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E9A3DB2AB2A55100DF76B9 /* libavformat.dylib */; };
 		15E9A3E32AB2A56C00DF76B9 /* libpostproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E9A3DD2AB2A56C00DF76B9 /* libpostproc.dylib */; };
@@ -33,6 +34,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		150065EE2AB5C09600084C97 /* libSDL2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSDL2.dylib; path = ../../../../opt/homebrew/Cellar/sdl2/2.28.3/lib/libSDL2.dylib; sourceTree = "<group>"; };
 		151AEF1C2AB297D100C7432D /* FFTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FFTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		151AEF1F2AB297D100C7432D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		15E9A3DB2AB2A55100DF76B9 /* libavformat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.dylib; path = ../../../../opt/homebrew/Cellar/ffmpeg/6.0_1/lib/libavformat.dylib; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				150065EF2AB5C09600084C97 /* libSDL2.dylib in Frameworks */,
 				15E9A3DC2AB2A55100DF76B9 /* libavformat.dylib in Frameworks */,
 				15E9A3E32AB2A56C00DF76B9 /* libpostproc.dylib in Frameworks */,
 				15E9A3E42AB2A56C00DF76B9 /* libavcodec.dylib in Frameworks */,
@@ -96,6 +99,7 @@
 		15E9A3DA2AB2A55100DF76B9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				150065EE2AB5C09600084C97 /* libSDL2.dylib */,
 				15E9A3DE2AB2A56C00DF76B9 /* libavcodec.dylib */,
 				15E9A3E12AB2A56C00DF76B9 /* libavdevice.dylib */,
 				15E9A3DF2AB2A56C00DF76B9 /* libavutil.dylib */,
@@ -290,10 +294,14 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/homebrew/Cellar/ffmpeg/6.0_1/lib,
+					/opt/homebrew/Cellar/sdl2/2.28.3/lib,
 				);
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/homebrew/Cellar/ffmpeg/6.0_1/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"USER_HEADER_SEARCH_PATHS[arch=*]" = /opt/homebrew/Cellar/ffmpeg/6.0_1/include;
+				USER_HEADER_SEARCH_PATHS = (
+					"<Multiple",
+					/opt/homebrew/Cellar/ffmpeg/6.0_1/include,
+					/opt/homebrew/Cellar/sdl2/2.28.3/include,
+				);
 			};
 			name = Debug;
 		};
@@ -304,10 +312,14 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/homebrew/Cellar/ffmpeg/6.0_1/lib,
+					/opt/homebrew/Cellar/sdl2/2.28.3/lib,
 				);
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/homebrew/Cellar/ffmpeg/6.0_1/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /opt/homebrew/Cellar/ffmpeg/6.0_1/include;
+				USER_HEADER_SEARCH_PATHS = (
+					"<Multiple",
+					/opt/homebrew/Cellar/ffmpeg/6.0_1/include,
+					/opt/homebrew/Cellar/sdl2/2.28.3/include,
+				);
 			};
 			name = Release;
 		};

@@ -18,6 +18,7 @@ extern "C"
 
 #include <iostream>
 #include "test_copy.h"
+#include "simple_player.cpp"
 
 using namespace std;
 
@@ -26,7 +27,8 @@ int main(int argc, const char *argv[]) {
     //打印FFmpeg 的配置信息（编译配置项）
     //cout << "avcodec_configuration : " << avcodec_configuration() << endl;
 
-    test_copy();
+    //test_copy();
+    play();
 
     return 0;
 }
