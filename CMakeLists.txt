@@ -7,7 +7,7 @@ include_directories(${FFMPEG_DIR}/include/) # 头文件搜索路径
 link_directories(${FFMPEG_DIR}/lib/) # 动态链接库或静态链接库的搜索路径
 
 set(SDL_DIR /opt/homebrew/Cellar/sdl2/2.28.3)   #sdl目录
-include_directories(${SDL_DIR/include/}) # 添加SDL头文件搜索路径
+include_directories(${SDL_DIR}/include/) # 添加SDL头文件搜索路径
 link_directories(${SDL_DIR}/lib/)
 
 include_directories(FFTest)
