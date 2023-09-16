@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		150065EF2AB5C09600084C97 /* libSDL2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 150065EE2AB5C09600084C97 /* libSDL2.dylib */; };
+		150065F92AB5C8EF00084C97 /* test_copy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 150065F62AB5C8EF00084C97 /* test_copy.cpp */; };
+		150065FA2AB5C8EF00084C97 /* test_copy.h in Sources */ = {isa = PBXBuildFile; fileRef = 150065F72AB5C8EF00084C97 /* test_copy.h */; };
+		150065FB2AB5C8EF00084C97 /* simple_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 150065F82AB5C8EF00084C97 /* simple_player.cpp */; };
 		151AEF202AB297D100C7432D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 151AEF1F2AB297D100C7432D /* main.cpp */; };
 		15E9A3DC2AB2A55100DF76B9 /* libavformat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E9A3DB2AB2A55100DF76B9 /* libavformat.dylib */; };
 		15E9A3E32AB2A56C00DF76B9 /* libpostproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E9A3DD2AB2A56C00DF76B9 /* libpostproc.dylib */; };
@@ -35,6 +38,12 @@
 
 /* Begin PBXFileReference section */
 		150065EE2AB5C09600084C97 /* libSDL2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSDL2.dylib; path = ../../../../opt/homebrew/Cellar/sdl2/2.28.3/lib/libSDL2.dylib; sourceTree = "<group>"; };
+		150065F02AB5C8C200084C97 /* simple_player.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simple_player.cpp; path = FFTest/simple_player.cpp; sourceTree = "<group>"; };
+		150065F12AB5C8C200084C97 /* test_copy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_copy.cpp; path = FFTest/test_copy.cpp; sourceTree = "<group>"; };
+		150065F22AB5C8C200084C97 /* test_copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = test_copy.h; path = FFTest/test_copy.h; sourceTree = "<group>"; };
+		150065F62AB5C8EF00084C97 /* test_copy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = test_copy.cpp; path = FFTest/test_copy.cpp; sourceTree = "<group>"; };
+		150065F72AB5C8EF00084C97 /* test_copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = test_copy.h; path = FFTest/test_copy.h; sourceTree = "<group>"; };
+		150065F82AB5C8EF00084C97 /* simple_player.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simple_player.cpp; path = FFTest/simple_player.cpp; sourceTree = "<group>"; };
 		151AEF1C2AB297D100C7432D /* FFTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FFTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		151AEF1F2AB297D100C7432D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		15E9A3DB2AB2A55100DF76B9 /* libavformat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.dylib; path = ../../../../opt/homebrew/Cellar/ffmpeg/6.0_1/lib/libavformat.dylib; sourceTree = "<group>"; };
@@ -71,6 +80,12 @@
 		151AEF132AB297D100C7432D = {
 			isa = PBXGroup;
 			children = (
+				150065F02AB5C8C200084C97 /* simple_player.cpp */,
+				150065F82AB5C8EF00084C97 /* simple_player.cpp */,
+				150065F12AB5C8C200084C97 /* test_copy.cpp */,
+				150065F22AB5C8C200084C97 /* test_copy.h */,
+				150065F62AB5C8EF00084C97 /* test_copy.cpp */,
+				150065F72AB5C8EF00084C97 /* test_copy.h */,
 				151AEF1E2AB297D100C7432D /* FFTest */,
 				151AEF1D2AB297D100C7432D /* Products */,
 				15E9A3DA2AB2A55100DF76B9 /* Frameworks */,
@@ -168,6 +183,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				150065F92AB5C8EF00084C97 /* test_copy.cpp in Sources */,
+				150065FA2AB5C8EF00084C97 /* test_copy.h in Sources */,
+				150065FB2AB5C8EF00084C97 /* simple_player.cpp in Sources */,
 				15E9A3EC2AB2AD6F00DF76B9 /* avio_reading.c in Sources */,
 				15E9A3EE2AB2ADB300DF76B9 /* decode_video.c in Sources */,
 				151AEF202AB297D100C7432D /* main.cpp in Sources */,
