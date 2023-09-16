@@ -66,18 +66,6 @@ extern "C"
 
 int thread_exit = 0;
 
-//Thread
-int sfp_refresh_thread(void *opaque) {
-    SDL_Event event;
-    while (thread_exit == 0) {
-        event.type = SFM_REFRESH_EVENT;
-        SDL_PushEvent(&event);
-        //Wait 40 ms
-        SDL_Delay(40);
-    }
-    return 0;
-}
-
 static int play() {
     AVFormatContext *pFormatCtx;
     int i, videoindex;
@@ -198,66 +186,60 @@ static int play() {
                                      SWS_BICUBIC,
                                      NULL, NULL, NULL);
 
-    //--------------
-    //video_tid = SDL_CreateThread(sfp_refresh_thread, NULL);
-    //
     //SDL_WM_SetCaption("Simple FFmpeg Player (SDL Update)", NULL);
 
     //Event Loop
-    for (;;) {
-        //Wait
-        SDL_WaitEvent(&event);
-        if (event.type == SFM_REFRESH_EVENT) {
-            //------------------------------
-            if (av_read_frame(pFormatCtx, packet) >= 0) {
-                if (packet->stream_index == videoindex) {
-                    //ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);
-                    //avcodec_decode_video2分解为两个函数
-                    ret = avcodec_send_packet(pCodecCtx, packet);
-                    got_picture = avcodec_receive_frame(pCodecCtx, pFrame);
+    while (av_read_frame(pFormatCtx, packet) >= 0) {
+        if (packet->stream_index == videoindex) {
+            //ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);
+            //avcodec_decode_video2分解为两个函数
+            ret = avcodec_send_packet(pCodecCtx, packet);
+            got_picture = avcodec_receive_frame(pCodecCtx, pFrame);
 
-                    if (ret < 0) {
-                        printf("Decode Error.\n");
-                        return -1;
-                    }
-                    if (got_picture) {
-                        /*SDL_LockYUVOverlay(bmp);
-                        pFrameYUV->data[0] = bmp->pixels[0];
-                        pFrameYUV->data[1] = bmp->pixels[2];
-                        pFrameYUV->data[2] = bmp->pixels[1];
-                        pFrameYUV->linesize[0] = bmp->pitches[0];
-                        pFrameYUV->linesize[1] = bmp->pitches[2];
-                        pFrameYUV->linesize[2] = bmp->pitches[1];
-                        sws_scale(img_convert_ctx, (const uint8_t *const *) pFrame->data, pFrame->linesize, 0,
-                                  pCodecCtx->height, pFrameYUV->data, pFrameYUV->linesize);
+            if (ret < 0) {
+                printf("Decode Error.\n");
+                return -1;
+            }
+            if (got_picture) {
+                /*SDL_LockYUVOverlay(bmp);
+                pFrameYUV->data[0] = bmp->pixels[0];
+                pFrameYUV->data[1] = bmp->pixels[2];
+                pFrameYUV->data[2] = bmp->pixels[1];
+                pFrameYUV->linesize[0] = bmp->pitches[0];
+                pFrameYUV->linesize[1] = bmp->pitches[2];
+                pFrameYUV->linesize[2] = bmp->pitches[1];
+                sws_scale(img_convert_ctx, (const uint8_t *const *) pFrame->data, pFrame->linesize, 0,
+                          pCodecCtx->height, pFrameYUV->data, pFrameYUV->linesize);
 
-                        SDL_UnlockYUVOverlay(bmp);
+                SDL_UnlockYUVOverlay(bmp);
 
-                        SDL_DisplayYUVOverlay(bmp, &rect);*/
-                        ret = SDL_UpdateYUVTexture(texture, NULL,
-                                                   pFrame->data[0], pFrame->linesize[0], pFrame->data[1],
-                                                   pFrame->linesize[1], pFrame->data[2], pFrame->linesize[2]);
-                        if (ret != 0) {
-                            printf("SDL_UpdateTexture failed");
-                            continue;
-                        }
-                        SDL_RenderClear(renderer);
-                        SDL_RenderCopy(renderer, texture, NULL, NULL);
-                        SDL_RenderPresent(renderer);
-                        SDL_Delay(40);
-                    }
+                SDL_DisplayYUVOverlay(bmp, &rect);*/
+                ret = SDL_UpdateYUVTexture(texture, NULL,
+                                           pFrame->data[0], pFrame->linesize[0], pFrame->data[1],
+                                           pFrame->linesize[1], pFrame->data[2], pFrame->linesize[2]);
+                if (ret != 0) {
+                    printf("SDL_UpdateTexture failed");
+                    continue;
                 }
-                av_packet_unref(packet);
-            } else {
-                //Exit Thread
-                thread_exit = 1;
-                break;
+                SDL_RenderClear(renderer);
+                SDL_RenderCopy(renderer, texture, NULL, NULL);
+                SDL_RenderPresent(renderer);
+                SDL_Delay(40);
             }
         }
-
+        av_packet_unref(packet);
+        SDL_PollEvent(&event);
+        switch (event.type) {
+            case SDL_QUIT:
+                SDL_DestroyTexture(texture);
+                SDL_DestroyRenderer(renderer);
+                SDL_DestroyWindow(screen);
+                SDL_Quit();
+                exit(0);
+            default:
+                break;
+        }
     }
-
-    SDL_Quit();
 
     sws_freeContext(img_convert_ctx);
 
@@ -269,6 +251,8 @@ static int play() {
     av_free(pFrameYUV);
     avcodec_close(pCodecCtx);
     avformat_close_input(&pFormatCtx);
+
+    SDL_Quit();
 
     return 0;
 }
