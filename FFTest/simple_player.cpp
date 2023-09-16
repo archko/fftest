@@ -64,8 +64,6 @@ extern "C"
 //Refresh
 #define SFM_REFRESH_EVENT  (SDL_USEREVENT + 1)
 
-int thread_exit = 0;
-
 static int play() {
     AVFormatContext *pFormatCtx;
     int i, videoindex;

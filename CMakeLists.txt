@@ -33,5 +33,6 @@ target_link_libraries(
         avdevice
         avfilter
         avformat
+        swscale
         swresample
 )
