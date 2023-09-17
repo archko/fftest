@@ -1,3 +1,5 @@
+#ifndef FFTEST_OPEN_VIDEO_H
+#define FFTEST_OPEN_VIDEO_H
 #ifdef _WIN32
 //Windows
 extern "C"
@@ -24,7 +26,7 @@ static int open(const char *filepath, int *videoIndex, AVFormatContext **pFormat
     int i;
     const AVCodec *pCodec;
 
-    if (avformat_open_input(pFormatCtx, filepath, NULL, NULL) != 0) {
+    if (avformat_open_input(pFormatCtx, filepath, NULL, NULL) < 0) {
         printf("Couldn't open input stream.\n");
         return -1;
     }
@@ -59,3 +61,5 @@ static int open(const char *filepath, int *videoIndex, AVFormatContext **pFormat
 
     return 0;
 }
+
+#endif

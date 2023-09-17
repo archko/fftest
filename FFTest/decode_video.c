@@ -36,6 +36,8 @@ extern "C"
 #endif
 #endif
 
+#include "open_video.h"
+
 #define INBUF_SIZE 4096
 
 static void pgm_save(unsigned char *buf, int wrap, int xsize, int ysize, char *filename) {
@@ -76,10 +78,11 @@ static void decode(AVCodecContext *dec_ctx, AVFrame *frame, AVPacket *pkt,
 }
 
 static int decode_video() {
-    const char *filename, *outfilename;
+    //const char *filename, *outfilename;
     AVFormatContext *pFormatCtx;
-    int i, videoindex;
-    AVCodecContext *pCodecCtx = NULL;
+    int videoIndex;
+    AVCodecContext *pCodecCtx;
+
     const AVCodec *pCodec;
     AVFrame *pFrame;
     AVPacket *pPacket;
@@ -91,42 +94,14 @@ static int decode_video() {
     size_t data_size;
     int ret;
 
-    filename = "/Users/archko/Movie/健身气功八段锦-clip.mp4";
-    outfilename = "/Users/archko/Movie/code.mp4";
+    const char *filename = "/Users/archko/Movie/健身气功八段锦-clip.mp4";
+    const char *outfilename = "/Users/archko/Movie/code.mp4";
     // set end of buffer to 0 (this ensures that no overreading happens for damaged MPEG streams)
     memset(inbuf + INBUF_SIZE, 0, AV_INPUT_BUFFER_PADDING_SIZE);
 
-    if (avformat_open_input(&pFormatCtx, filename, NULL, NULL) < 0) {
-        printf("Couldn't open input stream.\n");
-        return -1;
-    }
-    if (avformat_find_stream_info(pFormatCtx, NULL) < 0) {
-        printf("Couldn't find stream information.\n");
-        return -1;
-    }
-    videoindex = -1;
-    for (i = 0; i < pFormatCtx->nb_streams; i++) {
-        if (pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
-            videoindex = i;
-            break;
-        }
-    }
-    if (videoindex == -1) {
-        printf("Didn't find a video stream.\n");
-        return -1;
-    }
-    //pCodecCtx = pFormatCtx->streams[videoindex]->codec;
-    pCodec = avcodec_find_decoder(pFormatCtx->streams[videoindex]->codecpar->codec_id);
-    if (pCodec == NULL) {
-        printf("Codec not found.\n");
-        return -1;
-    }
-    pCodecCtx = avcodec_alloc_context3(pCodec); //pCodec不传会用默认参数
-
-    avcodec_parameters_to_context(pCodecCtx, pFormatCtx->streams[videoindex]->codecpar);
-
-    if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
-        printf("Could not open codec.\n");
+    ret = open(filename, &videoIndex, &pFormatCtx, &pCodecCtx);
+    if (ret < 0) {
+        printf("Could not open video");
         return -1;
     }
 
