@@ -60,14 +60,16 @@ extern "C"
 #endif
 #endif
 
+#include "open_video.h"
+
 /**
  * 升级ffmpeg 6.0.1
  */
 static int play() {
     AVFormatContext *pFormatCtx;
-    int i, videoindex;
+    int videoIndex;
     AVCodecContext *pCodecCtx;
-    const AVCodec *pCodec;
+
     AVFrame *pFrame;
     AVPacket *pPacket;
     struct SwsContext *pSwsContext;
@@ -85,7 +87,7 @@ static int play() {
     //avformat_network_init();
     //pFormatCtx = avformat_alloc_context();
 
-    if (avformat_open_input(&pFormatCtx, filepath, NULL, NULL) != 0) {
+    /*if (avformat_open_input(&pFormatCtx, filepath, NULL, NULL) != 0) {
         printf("Couldn't open input stream.\n");
         return -1;
     }
@@ -115,6 +117,11 @@ static int play() {
 
     if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
         printf("Could not open codec.\n");
+        return -1;
+    }*/
+    ret = open(filepath, &videoIndex, &pFormatCtx, &pCodecCtx);
+    if (ret < 0) {
+        printf("Could not open video");
         return -1;
     }
 
@@ -185,7 +192,7 @@ static int play() {
 
     //Event Loop
     while (av_read_frame(pFormatCtx, pPacket) >= 0) {
-        if (pPacket->stream_index == videoindex) {
+        if (pPacket->stream_index == videoIndex) {
             //ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);
             //avcodec_decode_video2分解为两个函数
             ret = avcodec_send_packet(pCodecCtx, pPacket);
