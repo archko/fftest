@@ -53,7 +53,7 @@ static int test_copy() {
             return 0;
         }
         //复制AVCodecContext的设置（Copy the settings of AVCodecContext）
-        AVCodecContext *codec_ctx = avcodec_alloc_context3(codec);
+        AVCodecContext *codec_ctx = avcodec_alloc_context3(NULL);
         ret = avcodec_parameters_to_context(codec_ctx, in_stream->codecpar);
         if (ret < 0) {
             printf("Failed to copy context from input to output stream codec context\n");

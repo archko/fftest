@@ -47,7 +47,6 @@ extern "C"
 #include "SDL/SDL.h"
 };
 #else
-//Linux...
 #ifdef __cplusplus
 extern "C"
 {
@@ -61,30 +60,29 @@ extern "C"
 #endif
 #endif
 
-//Refresh
-#define SFM_REFRESH_EVENT  (SDL_USEREVENT + 1)
-
+/**
+ * 升级ffmpeg 6.0.1
+ */
 static int play() {
     AVFormatContext *pFormatCtx;
     int i, videoindex;
     AVCodecContext *pCodecCtx;
     const AVCodec *pCodec;
-    AVFrame *pFrame, *pFrameYUV;
-    AVPacket *packet;
-    struct SwsContext *img_convert_ctx;
+    AVFrame *pFrame;
+    AVPacket *pPacket;
+    struct SwsContext *pSwsContext;
     //SDL
     int ret, got_picture;
     int screen_w = 0, screen_h = 0;
-    SDL_Window *screen;
-    SDL_Renderer *renderer;
+    SDL_Window *pWindow;
+    SDL_Renderer *pRenderer;
     //SDL_Overlay *bmp;
-    SDL_Texture *texture;
+    SDL_Texture *pTexture;
     SDL_Rect rect;
-    SDL_Thread *video_tid;
     SDL_Event event;
 
     const char *filepath = "/Users/archko/Movie/健身气功八段锦-clip.mp4";
-    avformat_network_init();
+    //avformat_network_init();
     //pFormatCtx = avformat_alloc_context();
 
     if (avformat_open_input(&pFormatCtx, filepath, NULL, NULL) != 0) {
@@ -112,7 +110,7 @@ static int play() {
         printf("Codec not found.\n");
         return -1;
     }
-    pCodecCtx = avcodec_alloc_context3(pCodec);
+    pCodecCtx = avcodec_alloc_context3(pCodec); //pCodec不传会用默认参数
     ret = avcodec_parameters_to_context(pCodecCtx, pFormatCtx->streams[videoindex]->codecpar);
 
     if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
@@ -121,7 +119,6 @@ static int play() {
     }
 
     pFrame = av_frame_alloc();
-    pFrameYUV = av_frame_alloc();
     //uint8_t *out_buffer=(uint8_t *)av_malloc(avpicture_get_size(PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height));
     //avpicture_fill((AVPicture *)pFrameYUV, out_buffer, PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height);
     //------------SDL----------------
@@ -132,35 +129,36 @@ static int play() {
 
     screen_w = pCodecCtx->width;
     screen_h = pCodecCtx->height;
-    //screen = SDL_SetVideoMode(screen_w, screen_h, 0, 0);
-    screen = SDL_CreateWindow(
-            "FFmpeg Tutorial",
+    //screen = SDL_SetVideoMode(screen_w, screen_h, 0, 0);//废弃了,换SDL_CreateWindow
+    pWindow = SDL_CreateWindow(
+            "MEDIA PLAYER",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             pCodecCtx->width,
             pCodecCtx->height,
-            0
+            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
     );
 
-    if (!screen) {
+    if (!pWindow) {
         printf("SDL: could not set video mode - exiting:%s\n", SDL_GetError());
         return -1;
     }
 
-    renderer = SDL_CreateRenderer(screen, -1, 0);
-    if (!renderer) {
+    pRenderer = SDL_CreateRenderer(pWindow, -1, 0);
+    if (!pRenderer) {
         printf("SDL: could not create renderer - exiting\n");
         exit(1);
     }
-    //bmp = SDL_CreateYUVOverlay(pCodecCtx->width, pCodecCtx->height, SDL_YV12_OVERLAY, screen);
-    texture = SDL_CreateTexture(
-            renderer,
+    //bmp = SDL_CreateYUVOverlay(pCodecCtx->width, pCodecCtx->height, SDL_YV12_OVERLAY, screen);//废弃了,换SDL_CreateTexture
+    pTexture = SDL_CreateTexture(
+            pRenderer,
             SDL_PIXELFORMAT_YV12,
+            //SDL_PIXELFORMAT_IYUV,//两个格式都行
             SDL_TEXTUREACCESS_STREAMING,
             pCodecCtx->width,
             pCodecCtx->height
     );
-    if (!texture) {
+    if (!pTexture) {
         fprintf(stderr, "SDL: could not create texture - exiting\n");
         exit(1);
     }
@@ -170,36 +168,51 @@ static int play() {
     rect.w = screen_w;
     rect.h = screen_h;
 
-    packet = (AVPacket *) av_malloc(sizeof(AVPacket));
+    pPacket = av_packet_alloc();
+    //(AVPacket *) av_malloc(sizeof(AVPacket));//c的写法
+    pFrame = av_frame_alloc();
 
-    printf("---------------File Information------------------\n");
+    printf("---------------Video Information------------------\n");
     av_dump_format(pFormatCtx, 0, filepath, 0);
-    printf("-------------------------------------------------\n");
 
     // initialize SWS context for software scaling
-    img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height,
-                                     pCodecCtx->pix_fmt,
-                                     pCodecCtx->width, pCodecCtx->height,
-                                     AV_PIX_FMT_YUV420P,
-                                     SWS_BICUBIC,
-                                     NULL, NULL, NULL);
-
-    //SDL_WM_SetCaption("Simple FFmpeg Player (SDL Update)", NULL);
+    pSwsContext = sws_getContext(pCodecCtx->width, pCodecCtx->height,
+                                 pCodecCtx->pix_fmt,
+                                 pCodecCtx->width, pCodecCtx->height,
+                                 AV_PIX_FMT_YUV420P,
+                                 SWS_BICUBIC,
+                                 NULL, NULL, NULL);
 
     //Event Loop
-    while (av_read_frame(pFormatCtx, packet) >= 0) {
-        if (packet->stream_index == videoindex) {
+    while (av_read_frame(pFormatCtx, pPacket) >= 0) {
+        if (pPacket->stream_index == videoindex) {
             //ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);
             //avcodec_decode_video2分解为两个函数
-            ret = avcodec_send_packet(pCodecCtx, packet);
-            got_picture = avcodec_receive_frame(pCodecCtx, pFrame);
-
+            ret = avcodec_send_packet(pCodecCtx, pPacket);
             if (ret < 0) {
                 printf("Decode Error.\n");
                 return -1;
             }
-            if (got_picture) {
-                /*SDL_LockYUVOverlay(bmp);
+            while (avcodec_receive_frame(pCodecCtx, pFrame) == 0) {
+                //SDL 刷新纹理,可能是多帧,所以用while,如果不循环,画面是黑的
+                SDL_UpdateYUVTexture(pTexture, NULL,
+                                     pFrame->data[0], pFrame->linesize[0],
+                                     pFrame->data[1], pFrame->linesize[1],
+                                     pFrame->data[2], pFrame->linesize[2]);
+                //以下这段可以不要
+                //rect.x = 0;
+                //rect.y = 0;
+                //rect.w = pCodecCtx->width;
+                //rect.h = pCodecCtx->height;
+
+                SDL_RenderClear(pRenderer);//SDL 清空渲染器内容
+                SDL_RenderCopy(pRenderer, pTexture, NULL, &rect);//SDL 将纹理复制到渲染器
+                SDL_RenderPresent(pRenderer);//SDL 渲染
+                SDL_Delay(40);  //没有这句,会是快速播放,这是简单地让播放看似正常
+            }
+            //下面的渲染过时了
+            /*if (got_picture) {
+                SDL_LockYUVOverlay(bmp);
                 pFrameYUV->data[0] = bmp->pixels[0];
                 pFrameYUV->data[1] = bmp->pixels[2];
                 pFrameYUV->data[2] = bmp->pixels[1];
@@ -211,27 +224,16 @@ static int play() {
 
                 SDL_UnlockYUVOverlay(bmp);
 
-                SDL_DisplayYUVOverlay(bmp, &rect);*/
-                ret = SDL_UpdateYUVTexture(texture, NULL,
-                                           pFrame->data[0], pFrame->linesize[0], pFrame->data[1],
-                                           pFrame->linesize[1], pFrame->data[2], pFrame->linesize[2]);
-                if (ret != 0) {
-                    printf("SDL_UpdateTexture failed");
-                    continue;
-                }
-                SDL_RenderClear(renderer);
-                SDL_RenderCopy(renderer, texture, NULL, NULL);
-                SDL_RenderPresent(renderer);
-                SDL_Delay(40);
-            }
+                SDL_DisplayYUVOverlay(bmp, &rect);
+            }*/
         }
-        av_packet_unref(packet);
+        av_packet_unref(pPacket);
         SDL_PollEvent(&event);
         switch (event.type) {
             case SDL_QUIT:
-                SDL_DestroyTexture(texture);
-                SDL_DestroyRenderer(renderer);
-                SDL_DestroyWindow(screen);
+                SDL_DestroyTexture(pTexture);
+                SDL_DestroyRenderer(pRenderer);
+                SDL_DestroyWindow(pWindow);
                 SDL_Quit();
                 exit(0);
             default:
@@ -239,17 +241,18 @@ static int play() {
         }
     }
 
-    sws_freeContext(img_convert_ctx);
-
-    // Free the YUV frame
-    av_frame_free(&pFrame);
+    sws_freeContext(pSwsContext);
 
     //--------------
-    //av_free(out_buffer);
-    av_free(pFrameYUV);
     avcodec_close(pCodecCtx);
     avformat_close_input(&pFormatCtx);
 
+    av_packet_free_side_data(pPacket);
+    av_frame_free(&pFrame);
+
+    SDL_DestroyTexture(pTexture);
+    SDL_DestroyRenderer(pRenderer);
+    SDL_DestroyWindow(pWindow);
     SDL_Quit();
 
     return 0;

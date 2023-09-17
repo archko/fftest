@@ -23,7 +23,6 @@ extern "C"
 using namespace std;
 
 int main(int argc, const char *argv[]) {
-    std::cout << "Hello, World!\n";
     //打印FFmpeg 的配置信息（编译配置项）
     //cout << "avcodec_configuration : " << avcodec_configuration() << endl;
 
