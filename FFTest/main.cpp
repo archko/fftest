@@ -19,6 +19,7 @@ extern "C"
 #include <iostream>
 #include "test_copy.h"
 #include "simple_player.cpp"
+#include "decode_video.c"
 
 using namespace std;
 
@@ -27,7 +28,8 @@ int main(int argc, const char *argv[]) {
     //cout << "avcodec_configuration : " << avcodec_configuration() << endl;
 
     //test_copy();
-    play();
+    //play();
+    decode_video();
 
     return 0;
 }
