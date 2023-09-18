@@ -20,6 +20,7 @@ add_executable(FFTest
         FFTest/test_copy.cpp
         FFTest/test_copy.h
         FFTest/simple_player.cpp
+        FFTest/simple_audio_player.cpp
 )
 
 # 添加链接库
